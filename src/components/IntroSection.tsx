@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FiArrowRight } from "react-icons/fi";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FeatureSection from "./FeatureSection";
 import FAQSection from "./FaqSection";
-import FeedbackSection from "./FeedbackSection";
 import FooterSection from "./FooterSectiont";
+import AuthModal from "./AuthModal";
 
 export default function HeroIntroSection() {
   const particles = useMemo(
@@ -20,6 +20,20 @@ export default function HeroIntroSection() {
       })),
     []
   );
+
+  const words = ["thinking", "creativity", "ideas", "productivity"];
+  const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+
+  const [openAuthModal, setOpenAuthModal] = useState<boolean>(false);
+  const [authType, setAuthType] = useState<"register" | "login">("register");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWordIndex((prev) => (prev + 1) % words.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden bg-white text-gray-900">
       {/* Animated Background Layer  */}
@@ -96,12 +110,26 @@ export default function HeroIntroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
           className="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl 
-             bg-linear-to-r from-black via-gray-700 to-gray-900
-             bg-clip-text text-transparent"
+                 bg-linear-to-r from-black via-gray-700 to-gray-900
+                 bg-clip-text text-transparent"
         >
           Organize your mind.
           <br />
-          Supercharge your thinking.
+          Supercharge your{" "}
+          <span className="text-blue-500 inline-block">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={currentWordIndex}
+                initial={{ opacity: 0, rotateX: -90 }}
+                animate={{ opacity: 1, rotateX: 0 }}
+                exit={{ opacity: 0, rotateX: 90 }}
+                transition={{ duration: 0.6 }}
+                className="inline-block"
+              >
+                {words[currentWordIndex]}.
+              </motion.span>
+            </AnimatePresence>
+          </span>
         </motion.h1>
 
         {/* Subtitle */}
@@ -116,17 +144,39 @@ export default function HeroIntroSection() {
           students, and anyone who thinks for a living.
         </motion.p>
 
-        {/* CTA Button */}
-        <motion.a
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.75 }}
-          href="#"
-          className="mt-8 inline-flex items-center rounded-md bg-blue-600 px-6 py-3 font-medium text-white shadow hover:bg-blue-700 transition"
-        >
-          Activate BrainLY
-          <FiArrowRight className="ml-2 mt-0.5" />
-        </motion.a>
+        {/* buttons */}
+        <div className="flex gap-4">
+          {/* CTA Button */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.75 }}
+            className="mt-8 inline-flex items-center rounded-md bg-blue-600 px-6 py-3 font-medium text-white shadow hover:bg-blue-700 transition"
+            onClick={() => {
+              setOpenAuthModal(true);
+              setAuthType("register");
+            }}
+          >
+            Activate BrainLY
+            <FiArrowRight className="ml-2 mt-0.5" />
+          </motion.button>
+
+          {/* See Your Brain CTA Button */}
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.75 }}
+            className="mt-8 inline-flex items-center rounded-md px-6 py-3 font-medium text-gray-500 border border-gray-500/20 shadow-sm bg-gray-100 hover:bg-gray-200"
+            onClick={() => {
+              setOpenAuthModal(true);
+              setAuthType("login");
+            }}
+          >
+            See Your Brain
+          </motion.button>
+        </div>
+
+        {openAuthModal && <AuthModal openModal={openAuthModal} setOpenModal={setOpenAuthModal} modalType={authType} />}
       </div>
 
       {/* Image Mockup */}
@@ -147,9 +197,6 @@ export default function HeroIntroSection() {
 
       {/* FeatureSection */}
       <FeatureSection />
-
-      {/* Feeback Section */}
-      {/* <FeedbackSection /> */}
 
       {/* FAQ Section */}
       <FAQSection />
