@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +61,12 @@ const Navbar: React.FC = () => {
               <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition-colors">
                 Tasks
               </li>
-              <li className="px-4 py-2 hover:bg-red-100 text-red-500 cursor-pointer transition-colors">
+              <li
+                className="px-4 py-2 hover:bg-red-100 text-red-500 cursor-pointer transition-colors"
+                onClick={() => {
+                  logout();
+                }}
+              >
                 Logout
               </li>
             </ul>
