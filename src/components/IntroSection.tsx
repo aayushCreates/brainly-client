@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { FiArrowRight } from "react-icons/fi";
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import FeatureSection from "./FeatureSection";
 import FAQSection from "./FaqSection";
@@ -186,8 +185,8 @@ export default function HeroIntroSection() {
         transition={{ delay: 1 }}
         className="relative mx-auto mb-10 max-w-5xl rounded-xl border border-gray-100 bg-white p-2 shadow-md"
       >
-        <Image
-          src="/brainly-mockup.png" // replace with your screenshot / UI mockup
+        <img
+          src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="BrainLY App Interface"
           width={1400}
           height={900}

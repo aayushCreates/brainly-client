@@ -1,11 +1,9 @@
 import Navbar from "@/components/Navbar";
 import axios from "axios";
 import { GetServerSidePropsContext } from "next";
-import { useState, ChangeEvent, FormEvent } from "react";
-import { BiSearch } from "react-icons/bi";
+import { useState, FormEvent } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { IoClose, IoShareSocial } from "react-icons/io5";
-import { MdDelete } from "react-icons/md";
 
 type ContentType = "IMAGE" | "VIDEO" | "ARTICLE" | "AUDIO";
 
@@ -100,9 +98,6 @@ const Hero: React.FC = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState<string>("");
 
-  const handleAddContentClick = () => {
-    setIsAddContentOpen(true);
-  };
 
   const handleCloseModal = () => {
     setTitle("");
@@ -147,7 +142,6 @@ const Hero: React.FC = () => {
       <Navbar />
 
       {/* Hero / Search Section */}
-
       {/* Modal */}
       {isAddContentOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">

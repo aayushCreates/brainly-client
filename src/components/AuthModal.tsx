@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+
+import { useAuth } from "@/context/AuthContext";
 
 interface AuthCardProps {
   openModal: boolean;
   setOpenModal: (val: boolean) => void;
-  modalType: "login" | "register"; // parent decides initial modal type
+  modalType: "login" | "register";
 }
 
 export default function AuthModal({
@@ -15,10 +18,25 @@ export default function AuthModal({
 }: AuthCardProps) {
   const [isLogin, setIsLogin] = useState(modalType === "login");
 
-  // Update internal state if parent changes modalType
-  useEffect(() => {
-    setIsLogin(modalType === "login");
-  }, [modalType]);
+  const { register, login } = useAuth();
+
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSubmit = async () => {
+    try {
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await register(name, email, phone, password);
+      }
+      setOpenModal(false); // Close modal after success
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
 
   if (!openModal) return null;
 
@@ -57,29 +75,50 @@ export default function AuthModal({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-2"
               >
                 {!isLogin && (
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    className="w-full px-4 py-3 border border-black/10 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      placeholder="Full Name"
+                      className="w-full px-4 py-3 border border-black/20 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <input
+                      type="phone"
+                      required
+                      value={phone}
+                      placeholder="Phone No."
+                      className="w-full px-4 py-3 border border-black/20 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
                 )}
                 <input
                   type="email"
+                  required
+                  value={email}
                   placeholder="Email"
-                  className="w-full px-4 py-3 border border-black/10 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                  className="w-full px-4 py-3 border border-black/20 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <input
                   type="password"
+                  required
+                  value={password}
                   placeholder="Password"
-                  className="w-full px-4 py-3 border border-black/10 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                  className="w-full px-4 py-3 border border-black/20 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none transition"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  className="w-full py-3 bg-linear-to-r from-blue-400/90 to-blue-600 text-white border border-blue-500/40 font-semibold rounded-md shadow-sm transition hover:cursor-pointer"
+                  type="button"
+                  className="w-full py-3 bg-linear-to-r from-blue-400/90 to-blue-600 text-white border border-blue-500/40 font-semibold rounded-md shadow-sm transition hover:cursor-pointer mt-2"
+                  onClick={handleSubmit}
                 >
                   {isLogin ? "Login" : "Register"}
                 </motion.button>
@@ -93,7 +132,10 @@ export default function AuthModal({
             </div>
 
             {/* Google Auth */}
-            <button className="w-full flex items-center justify-center gap-3 py-3 mb-6 border border-black/10 rounded-md shadow-sm bg-gray-100 transition hover:cursor-pointer">
+            <button
+              className="w-full flex items-center justify-center gap-3 py-3 mb-6 border border-black/10 rounded-md shadow-sm bg-gray-100 transition hover:cursor-pointer"
+              onClick={() => {}}
+            >
               <FcGoogle size={26} />
               <span className="font-medium text-gray-700">
                 {isLogin ? "Sign in with Google" : "Sign up with Google"}

@@ -1,11 +1,22 @@
+import { useRouter } from "next/router";
 import HeroIntroSection from "../components/IntroSection";
-import Hero from "./hero";
-
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/home");
+    }
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) return null;
+
   return (
     <div>
-      {/* <Hero /> */}
       <HeroIntroSection />
     </div>
   );
