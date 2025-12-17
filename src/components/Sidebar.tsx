@@ -1,0 +1,96 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import {
+  FiHome,
+  FiBookOpen,
+  FiStar,
+  FiTag,
+  FiArchive,
+  FiSettings,
+  FiChevronLeft,
+  FiChevronRight,
+} from 'react-icons/fi'
+
+type NavItem = {
+  label: string
+  href: string
+  icon: React.ReactNode
+}
+
+const navItems: NavItem[] = [
+  { label: 'Dashboard', href: '/dashboard', icon: <FiHome /> },
+  { label: 'Notes', href: '/notes', icon: <FiBookOpen /> },
+  { label: 'Favorites', href: '/favorites', icon: <FiStar /> },
+  { label: 'Tags', href: '/tags', icon: <FiTag /> },
+  { label: 'Archive', href: '/archive', icon: <FiArchive /> },
+]
+
+export default function Sidebar() {
+  const pathname = usePathname()
+  const [collapsed, setCollapsed] = useState(false)
+
+  return (
+    <div
+      className={`relative h-screen border-r border-r-gray-100 bg-white transition-all duration-300
+      ${collapsed ? 'w-16' : 'w-64'}`}
+    >
+      {/* Header */}
+      <div className="flex h-16 items-center justify-between border-b border-b-gray-100 px-4">
+        {!collapsed && (
+          <span className="text-lg font-bold text-blue-500">
+            BrainLY
+          </span>
+        )}
+
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+        >
+          {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <nav className="mt-4 flex flex-col gap-1 px-2">
+        {navItems.map((item) => {
+          const active = pathname === item.href
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
+                ${
+                  active
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 hover:bg-blue-50/70'
+                }`}
+            >
+              <span className="text-lg bg-blue-500/10 border border-blue-500/50 rounded-sm text-blue-500 px-1.5 py-1.5">{item.icon}</span>
+
+              {!collapsed && (
+                <span className="whitespace-nowrap">
+                  {item.label}
+                </span>
+              )}
+            </Link>
+          )
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="absolute bottom-0 w-full border-t border-t-gray-100 p-2">
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          <FiSettings className="text-lg" />
+          {!collapsed && <span>Settings</span>}
+        </Link>
+      </div>
+    </div>
+  )
+}
