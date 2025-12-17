@@ -7,6 +7,8 @@ import FeatureSection from "./FeatureSection";
 import FAQSection from "./FaqSection";
 import FooterSection from "./FooterSectiont";
 import AuthModal from "./AuthModal";
+import Pricing from "./PricingSection";
+import Navbar from "./Navbar";
 
 export default function HeroIntroSection() {
   const particles = useMemo(
@@ -37,6 +39,9 @@ export default function HeroIntroSection() {
     <section className="relative w-full overflow-hidden bg-white text-gray-900">
       {/* Animated Background Layer  */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Navbar */}
+        <Navbar />
+
         {/* Gradient Layer */}
         <div className="absolute inset-0 from-white via-gray-50 to-gray-100" />
 
@@ -196,6 +201,9 @@ export default function HeroIntroSection() {
 
       {/* FeatureSection */}
       <FeatureSection />
+
+      {/* Pricing Section */}
+      <Pricing />
 
       {/* FAQ Section */}
       <FAQSection />
