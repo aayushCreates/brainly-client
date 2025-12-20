@@ -1,5 +1,6 @@
 import AddContentModal from "@/components/AddContentModal";
 import Sidebar from "@/components/Sidebar";
+import ViewContentModal from "@/components/ViewContentModal";
 import { Content } from "@/types/content.types";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -12,6 +13,8 @@ const Hero = () => {
   const [content, setContent] = useState<Content[]>([]);
   const [search, setSearch] = useState<string>("");
   const [isAddContentOpen, setIsAddContentOpen] = useState<boolean>(false);
+  const [isViewContentOpen, setIsViewContentOpen] = useState<boolean>(false);
+  const [selectedContent, setSelectedContent] = useState<Content | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const getAllData = async () => {
@@ -48,6 +51,11 @@ const Hero = () => {
 
   const handleContentAdded = () => {
     getAllData();
+  };
+
+  const handleCardClick = (item: Content) => {
+    setSelectedContent(item);
+    setIsViewContentOpen(true);
   };
 
   return (
@@ -87,7 +95,8 @@ const Hero = () => {
                 filteredData.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition"
+                    onClick={() => handleCardClick(item)}
+                    className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition cursor-pointer"
                   >
                     {/* Media */}
                     {item.type === "IMAGE" && item.url && (
@@ -100,15 +109,15 @@ const Hero = () => {
 
                     {item.type === "VIDEO" && item.url && (
                       <iframe
-                        className="h-40 w-full rounded-t-xl"
+                        className="h-40 w-full rounded-t-xl pointer-events-none"
                         src={item.url.replace("watch?v=", "embed/")}
-                        allowFullScreen
+                        title={item.title}
                       />
                     )}
 
                     {item.type === "AUDIO" && item.url && (
                       <div className="p-3">
-                        <audio controls className="w-full" />
+                        <audio controls className="w-full pointer-events-none" />
                       </div>
                     )}
 
@@ -119,8 +128,20 @@ const Hero = () => {
                           {item.title}
                         </h3>
                         <div className="flex gap-2 text-gray-500">
-                          <IoShareSocial className="cursor-pointer hover:text-blue-500" />
-                          <FiExternalLink className="cursor-pointer hover:text-gray-800" />
+                          <IoShareSocial 
+                            className="cursor-pointer hover:text-blue-500" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                // Add share logic here if needed
+                            }}
+                          />
+                          <FiExternalLink 
+                            className="cursor-pointer hover:text-gray-800"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if(item.url) window.open(item.url, '_blank');
+                            }}
+                          />
                         </div>
                       </div>
 
@@ -153,7 +174,7 @@ const Hero = () => {
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Add Content Modal */}
       {isAddContentOpen && (
         <AddContentModal
           modalOpen={isAddContentOpen}
@@ -161,6 +182,13 @@ const Hero = () => {
           onSuccess={handleContentAdded}
         />
       )}
+
+      {/* View Content Modal */}
+      <ViewContentModal
+        openModal={isViewContentOpen}
+        setOpenModal={setIsViewContentOpen}
+        data={selectedContent}
+      />
     </div>
   );
 };
