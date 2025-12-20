@@ -1,28 +1,61 @@
 import { Content } from "@/types/content.types";
-import { FiX, FiExternalLink } from "react-icons/fi";
+import axios from "axios";
+import { FiExternalLink, FiTrash, FiX } from "react-icons/fi";
+import { toast } from "sonner";
 
 type ViewContentProps = {
   openModal: boolean;
   setOpenModal: (val: boolean) => void;
   data: Content | null;
+  onDelete: () => void;
 };
 
-const ViewContentModal = ({ openModal, setOpenModal, data }: ViewContentProps) => {
+const ViewContentModal = ({ openModal, setOpenModal, data, onDelete }: ViewContentProps) => {
   if (!openModal || !data) return null;
+
+  const handleDelete = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(
+            `${process.env.NEXT_PUBLIC_BASE_API_URL}/content/${data.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if(response.data.success) {
+            toast.success("Content deleted successfully");
+            onDelete();
+            setOpenModal(false);
+        }
+    }catch(err) {
+        toast.error("Failed to delete content");
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-2xl">
-        {/* Close Button */}
-        <button
-          onClick={() => setOpenModal(false)}
-          className="absolute right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-        >
-          <FiX size={24} />
-        </button>
+        {/* Actions */}
+        <div className="absolute right-4 top-4 flex gap-2">
+            <button
+            onClick={handleDelete}
+            className="rounded-full p-2 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
+            title="Delete Content"
+            >
+            <FiTrash size={20} />
+            </button>
+            <button
+            onClick={() => setOpenModal(false)}
+            className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            >
+            <FiX size={24} />
+            </button>
+        </div>
 
         {/* Header */}
-        <div className="mb-6 pr-8">
+        <div className="mb-6 pr-20">
           <h2 className="text-2xl font-bold text-gray-900">{data.title}</h2>
           <div className="mt-2 flex items-center gap-3">
             <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">

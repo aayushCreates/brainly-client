@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import { BiUser } from 'react-icons/bi'
 import {
   FiHome,
   FiBookOpen,
@@ -84,11 +85,11 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="absolute bottom-0 w-full border-t border-t-gray-100 p-2">
         <Link
-          href="/settings"
+          href="/profile"
           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
         >
-          <FiSettings className="text-lg" />
-          {!collapsed && <span>Settings</span>}
+          <BiUser className="text-lg" />
+          {!collapsed && <span>Profile</span>}
         </Link>
       </div>
     </div>

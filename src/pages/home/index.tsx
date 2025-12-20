@@ -183,13 +183,26 @@ const Hero = () => {
         />
       )}
 
-      {/* View Content Modal */}
-      <ViewContentModal
-        openModal={isViewContentOpen}
-        setOpenModal={setIsViewContentOpen}
-        data={selectedContent}
-      />
-    </div>
-  );
-};
-export default Hero;
+            {/* View Content Modal */}
+
+            <ViewContentModal
+
+              openModal={isViewContentOpen}
+
+              setOpenModal={setIsViewContentOpen}
+
+              data={selectedContent}
+
+              onDelete={handleContentAdded}
+
+            />
+
+          </div>
+
+        );
+
+      };
+
+      export default Hero;
+
+      
