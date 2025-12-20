@@ -22,7 +22,7 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: <FiHome /> },
+  { label: 'Home', href: '/home', icon: <FiHome /> },
   { label: 'Notes', href: '/notes', icon: <FiBookOpen /> },
   { label: 'Favorites', href: '/favorites', icon: <FiStar /> },
   { label: 'Tags', href: '/tags', icon: <FiTag /> },
@@ -66,11 +66,11 @@ export default function Sidebar() {
               className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
                 ${
                   active
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 hover:bg-blue-50/70'
+                    ? 'bg-blue-50 text-blue-500'
+                    : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
-              <span className="text-lg bg-blue-500/10 border border-blue-500/50 rounded-sm text-blue-500 px-1.5 py-1.5">{item.icon}</span>
+              <span className="text-lg rounded-sm text-blue-500 px-1.5 py-1.5">{item.icon}</span>
 
               {!collapsed && (
                 <span className="whitespace-nowrap">

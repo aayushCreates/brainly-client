@@ -96,20 +96,20 @@ const Hero = () => {
                   <div
                     key={item.id}
                     onClick={() => handleCardClick(item)}
-                    className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition cursor-pointer"
+                    className="flex flex-col rounded-md border border-gray-200 bg-white shadow-sm transition cursor-pointer"
                   >
                     {/* Media */}
                     {item.type === "IMAGE" && item.url && (
                       <img
                         src={item.url}
                         alt={item.title}
-                        className="h-40 w-full rounded-t-xl object-cover"
+                        className="h-40 w-full rounded-t-md object-cover"
                       />
                     )}
 
                     {item.type === "VIDEO" && item.url && (
                       <iframe
-                        className="h-40 w-full rounded-t-xl pointer-events-none"
+                        className="h-40 w-full rounded-t-md pointer-events-none"
                         src={item.url.replace("watch?v=", "embed/")}
                         title={item.title}
                       />
@@ -128,13 +128,6 @@ const Hero = () => {
                           {item.title}
                         </h3>
                         <div className="flex gap-2 text-gray-500">
-                          <IoShareSocial 
-                            className="cursor-pointer hover:text-blue-500" 
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                // Add share logic here if needed
-                            }}
-                          />
                           <FiExternalLink 
                             className="cursor-pointer hover:text-gray-800"
                             onClick={(e) => {
@@ -152,7 +145,7 @@ const Hero = () => {
                         {item.tags.map((tag, i) => (
                           <span
                             key={i}
-                            className="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-600 border border-blue-200"
+                            className="rounded-xs bg-blue-50 px-2 py-0.5 text-xs text-blue-600 border border-blue-200"
                           >
                             {tag}
                           </span>
