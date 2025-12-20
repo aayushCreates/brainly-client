@@ -2,42 +2,43 @@ import AddContentModal from "@/components/AddContentModal";
 import Sidebar from "@/components/Sidebar";
 import { Content } from "@/types/content.types";
 import axios from "axios";
-import { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { IoShareSocial } from "react-icons/io5";
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/content`
-    );
-    if (!data.success) {
-      return {
-        data: [],
-      };
-    }
-
-    return {
-      props: {
-        data: data.data,
-      },
-    };
-  } catch (err) {
-    return {
-      props: {
-        data: [],
-      },
-    };
-  }
-}
-
-const Hero= ({ data }: { data: Content[] }) => {
+const Hero = () => {
   const router = useRouter();
-  const [content, setContent] = useState<Content[]>(data);
+  const [content, setContent] = useState<Content[]>([]);
   const [search, setSearch] = useState<string>("");
   const [isAddContentOpen, setIsAddContentOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const getAllData = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_API_URL}/content`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data.success) {
+        setContent(data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllData();
+  }, []);
 
   const filteredData = Array.isArray(content) && content.filter(
     (item) =>
@@ -46,10 +47,8 @@ const Hero= ({ data }: { data: Content[] }) => {
   );
 
   const handleContentAdded = () => {
-    router.replace(router.asPath);
+    getAllData();
   };
-
-  useEffect(() => {}, []);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -78,67 +77,78 @@ const Hero= ({ data }: { data: Content[] }) => {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          { Array.isArray(filteredData) && filteredData.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition"
-            >
-              {/* Media */}
-              {item.type === "IMAGE" && item.url && (
-                <img
-                  src={item.url}
-                  alt={item.title}
-                  className="h-40 w-full rounded-t-xl object-cover"
-                />
-              )}
-
-              {item.type === "VIDEO" && item.url && (
-                <iframe
-                  className="h-40 w-full rounded-t-xl"
-                  src={item.url.replace("watch?v=", "embed/")}
-                  allowFullScreen
-                />
-              )}
-
-              {item.type === "AUDIO" && item.url && (
-                <div className="p-3">
-                  <audio controls className="w-full" />
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="flex flex-1 flex-col p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                  <div className="flex gap-2 text-gray-500">
-                    <IoShareSocial className="cursor-pointer hover:text-blue-500" />
-                    <FiExternalLink className="cursor-pointer hover:text-gray-800" />
-                  </div>
-                </div>
-
-                <p className="mt-1 text-xs text-gray-500">{item.type}</p>
-
-                {/* Tags */}
-                <div className="mt-auto flex flex-wrap gap-2 pt-3">
-                  {item.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      className="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-600 border border-blue-200"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+          {isLoading ? (
+            <div className="col-span-full flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             </div>
-          ))}
+          ) : (
+            <>
+              {Array.isArray(filteredData) &&
+                filteredData.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition"
+                  >
+                    {/* Media */}
+                    {item.type === "IMAGE" && item.url && (
+                      <img
+                        src={item.url}
+                        alt={item.title}
+                        className="h-40 w-full rounded-t-xl object-cover"
+                      />
+                    )}
 
-          {Array.isArray(filteredData) && filteredData.length === 0 && (
-            <p className="col-span-full text-center text-gray-400">
-              {search
-                ? `No content found for “${search}”`
-                : "No content available. Add some content to get started."}
-            </p>
+                    {item.type === "VIDEO" && item.url && (
+                      <iframe
+                        className="h-40 w-full rounded-t-xl"
+                        src={item.url.replace("watch?v=", "embed/")}
+                        allowFullScreen
+                      />
+                    )}
+
+                    {item.type === "AUDIO" && item.url && (
+                      <div className="p-3">
+                        <audio controls className="w-full" />
+                      </div>
+                    )}
+
+                    {/* Content */}
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-semibold text-gray-900">
+                          {item.title}
+                        </h3>
+                        <div className="flex gap-2 text-gray-500">
+                          <IoShareSocial className="cursor-pointer hover:text-blue-500" />
+                          <FiExternalLink className="cursor-pointer hover:text-gray-800" />
+                        </div>
+                      </div>
+
+                      <p className="mt-1 text-xs text-gray-500">{item.type}</p>
+
+                      {/* Tags */}
+                      <div className="mt-auto flex flex-wrap gap-2 pt-3">
+                        {item.tags.map((tag, i) => (
+                          <span
+                            key={i}
+                            className="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-600 border border-blue-200"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+              {Array.isArray(filteredData) && filteredData.length === 0 && (
+                <p className="col-span-full text-center text-gray-400">
+                  {search
+                    ? `No content found for “${search}”`
+                    : "No content available. Add some content to get started."}
+                </p>
+              )}
+            </>
           )}
         </div>
       </main>
