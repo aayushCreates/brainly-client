@@ -12,7 +12,7 @@ interface DecodedToken {
 }
 
 interface User {
-  id: string;
+  id?: string;
   name?: string;
   email: string;
   phone?: string;
@@ -24,6 +24,7 @@ interface AuthContextType {
   register: (name: string, email: string, phone: string, password: string) => void;
   login: (email: string, password: string) => void;
   logout: () => void;
+  oAuth: ()=> void;
   isAuthenticated: boolean;
 }
 
@@ -35,13 +36,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get("token");
+  
+    if (tokenFromUrl) {
+      try {
+        const decoded: DecodedToken = jwtDecode(tokenFromUrl);
+        setToken(tokenFromUrl);
+        setUser({ id: decoded.id, email: decoded.email });
+  
+        localStorage.setItem("token", tokenFromUrl);
+  
+        router.replace("/home");
+        return;
+      } catch {
+        toast.error("Invalid token");
+      }
+    }
+  
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       try {
-        const decoded: DecodedToken = jwtDecode(storedToken) as DecodedToken;
-        console.log("deccoded: ", decoded);
-        const currentTime = Date.now() / 1000;
-        if (decoded.exp > currentTime) {
+        const decoded: DecodedToken = jwtDecode(storedToken);
+        if (decoded.exp > Date.now() / 1000) {
           setToken(storedToken);
           setUser({ id: decoded.id, email: decoded.email });
         } else {
@@ -52,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, []);
+  
 
   const login = async (email: string, password: string) => {
     try {
@@ -98,6 +116,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const oAuth = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/google`;
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
@@ -109,7 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = !!token;
 
-  return <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout }}>
+  return <AuthContext.Provider value={{ user, isAuthenticated, login, register, oAuth, logout }}>
     { children }
   </AuthContext.Provider>
 }

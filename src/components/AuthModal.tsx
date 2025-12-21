@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
 
 import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
 
 interface AuthCardProps {
   openModal: boolean;
@@ -18,7 +19,7 @@ export default function AuthModal({
 }: AuthCardProps) {
   const [isLogin, setIsLogin] = useState(modalType === "login");
 
-  const { register, login } = useAuth();
+  const { register, login, oAuth } = useAuth();
 
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -28,15 +29,26 @@ export default function AuthModal({
   const handleSubmit = async () => {
     try {
       if (isLogin) {
-        await login(email, password);
+        login(email, password);
       } else {
-        await register(name, email, phone, password);
+        register(name, email, phone, password);
       }
-      setOpenModal(false); // Close modal after success
+      setOpenModal(false);
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
+      return;
     }
   };
+
+  const handleAuthByGoogle = async ()=> {
+    try {
+      console.log("clickedddddddddddd.........");
+      oAuth();
+    }catch(err) {
+      toast.error("Something went wrong. Please try again.");
+      return;
+    }
+  }
 
   if (!openModal) return null;
 
@@ -134,7 +146,9 @@ export default function AuthModal({
             {/* Google Auth */}
             <button
               className="w-full flex items-center justify-center gap-3 py-3 mb-6 border border-black/10 rounded-md shadow-sm bg-gray-100 transition hover:cursor-pointer"
-              onClick={() => {}}
+              onClick={() => {
+                handleAuthByGoogle();
+              }}
             >
               <FcGoogle size={26} />
               <span className="font-medium text-gray-700">
