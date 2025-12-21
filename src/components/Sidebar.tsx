@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { BiUser } from 'react-icons/bi'
+import { BiChat, BiUser } from 'react-icons/bi'
+import { FaTasks } from 'react-icons/fa'
 import {
   FiHome,
   FiBookOpen,
@@ -23,10 +24,9 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: 'Home', href: '/home', icon: <FiHome /> },
-  { label: 'Notes', href: '/notes', icon: <FiBookOpen /> },
+  { label: 'Tasks', href: '/tasks', icon: <FaTasks /> },
   { label: 'Favorites', href: '/favorites', icon: <FiStar /> },
-  { label: 'Tags', href: '/tags', icon: <FiTag /> },
-  { label: 'Archive', href: '/archive', icon: <FiArchive /> },
+  { label: 'Chat with Brain', href: '/chat', icon: <BiChat /> },
 ]
 
 export default function Sidebar() {

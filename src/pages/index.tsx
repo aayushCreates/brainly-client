@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import HeroIntroSection from "../components/IntroSection";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import ProfileSection from "./profile";
 
 export default function Home() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function Home() {
   return (
     <div>
       <HeroIntroSection />
+      <ProfileSection />
     </div>
   );
 }
