@@ -7,11 +7,7 @@ import { BiChat, BiUser } from 'react-icons/bi'
 import { FaTasks } from 'react-icons/fa'
 import {
   FiHome,
-  FiBookOpen,
   FiStar,
-  FiTag,
-  FiArchive,
-  FiSettings,
   FiChevronLeft,
   FiChevronRight,
 } from 'react-icons/fi'
